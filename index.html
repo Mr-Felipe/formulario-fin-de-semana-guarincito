@@ -307,12 +307,14 @@
       const inicio = timeToMinutes(config.hora_inicio);
       const fin = timeToMinutes(config.hora_fin);
       const open = config.activo && (isSaturday || isSunday) && totalMin >= inicio && totalMin <= fin;
-      if (!open && (isSaturday || isSunday)) {
-        document.getElementById('confirmForm').classList.add('hidden');
-        document.getElementById('closedMsg').classList.remove('hidden');
-      } else if (!isSaturday && !isSunday) {
-        document.getElementById('confirmForm').classList.add('hidden');
-        document.getElementById('closedMsg').classList.remove('hidden');
+      const form = document.getElementById('confirmForm');
+      const msg = document.getElementById('closedMsg');
+      if (open) {
+        form.classList.remove('hidden');
+        msg.classList.add('hidden');
+      } else {
+        form.classList.add('hidden');
+        msg.classList.remove('hidden');
       }
     }
 
