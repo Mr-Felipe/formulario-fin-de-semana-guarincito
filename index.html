@@ -326,18 +326,6 @@
     checkOpen();
     loadConfig();
 
-    if (!isOpen && (isSaturday || isSunday)) {
-      document.getElementById('confirmForm').classList.add('hidden');
-      document.getElementById('closedMsg').classList.remove('hidden');
-      document.getElementById('closedTimeMsg').innerHTML = `Este formulario solo funciona los <strong>${isSaturday ? 'sabados' : 'domingos'}</strong>`;
-      document.getElementById('closedSchedule').textContent = `${config.hora_inicio} - ${config.hora_fin}`;
-    } else if (!isSaturday && !isSunday) {
-      document.getElementById('confirmForm').classList.add('hidden');
-      document.getElementById('closedMsg').classList.remove('hidden');
-      document.getElementById('closedTimeMsg').innerHTML = 'Este formulario solo funciona los <strong>sabados</strong> y <strong>domingos</strong>';
-      document.getElementById('closedSchedule').textContent = '';
-    }
-
     async function loadCarreras() {
       const { data: carreras } = await db.from('carreras').select('id, nombre').in('nombre', CARRERAS_FILTER || []).eq('activo', true);
       const select = document.getElementById('carrera');
