@@ -301,8 +301,18 @@
 
       if (error) { showError('Error al enviar. Intenta de nuevo.'); resetBtn(); return; }
       const result = data?.[0];
-      if (!result?.confirmacion_id) { showError('Registro enviado pero no se pudo obtener el codigo.'); resetBtn(); return; }
-      if (result.motivo_alerta === 'no_en_padron') { showError('Tu codigo no esta registrado en el padron de beneficiarios.'); resetBtn(); return; }
+
+      if (result?.motivo_alerta === 'no_en_padron') {
+        showError('Tu codigo no esta registrado en el padron de beneficiarios.');
+        resetBtn();
+        return;
+      }
+
+      if (!result?.confirmacion_id) {
+        showError('Registro enviado pero no se pudo obtener el codigo.');
+        resetBtn();
+        return;
+      }
 
       const fecha = new Date().toLocaleString('es-CO', { timeZone: 'America/Bogota' });
       const carreraSelect = document.getElementById('carrera');
