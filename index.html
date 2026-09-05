@@ -328,7 +328,8 @@
       if (!carrera_id || !codigo_id || !nombre) { showError('Todos los campos son obligatorios'); resetBtn(); return; }
 
       const { data, error } = await db.rpc('fn_insert_confirmacion_web', {
-        p_codigo_id: codigo_id, p_carrera_id: carrera_id, p_nombre: nombre, p_tipo_comida_id: TIPO_COMIDA_ID
+        p_codigo_id: codigo_id, p_carrera_id: carrera_id, p_nombre: nombre, p_tipo_comida_id: TIPO_COMIDA_ID,
+        p_formulario_tipo: 'fin_de_semana'
       });
 
       if (error) { showError('Error al enviar. Intenta de nuevo.'); resetBtn(); return; }
