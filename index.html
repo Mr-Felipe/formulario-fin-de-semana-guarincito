@@ -47,6 +47,7 @@
         </div>
         <h3 class="text-lg font-bold text-slate-800 mb-2">Formulario Cerrado</h3>
         <p id="closedTimeMsg" class="text-sm text-slate-500"></p>
+        <p id="closedSchedule" class="text-lg font-bold text-slate-800 mt-1"></p>
         <p class="text-xs text-slate-400 mt-2">Horario de Colombia (UTC-5)</p>
       </div>
 
@@ -297,7 +298,9 @@
       const el = document.getElementById('formSchedule');
       if (el) el.textContent = `${isSaturday ? 'Sabado' : 'Domingo'} ${config.hora_inicio} - ${config.hora_fin}`;
       const closedMsg = document.getElementById('closedTimeMsg');
-      if (closedMsg) closedMsg.innerHTML = `Este formulario solo funciona los <strong>${isSaturday ? 'sabados' : 'domingos'}</strong> de <strong>${config.hora_inicio}</strong> a <strong>${config.hora_fin}</strong>.`;
+      if (closedMsg) closedMsg.innerHTML = `Este formulario solo funciona los <strong>${isSaturday ? 'sabados' : 'domingos'}</strong>`;
+      const closedSchedule = document.getElementById('closedSchedule');
+      if (closedSchedule) closedSchedule.textContent = `${config.hora_inicio} - ${config.hora_fin}`;
     }
 
     function checkOpen() {
@@ -326,11 +329,13 @@
     if (!isOpen && (isSaturday || isSunday)) {
       document.getElementById('confirmForm').classList.add('hidden');
       document.getElementById('closedMsg').classList.remove('hidden');
-      document.getElementById('closedTimeMsg').innerHTML = `Este formulario solo funciona los <strong>${isSaturday ? 'sabados' : 'domingos'}</strong> de <strong>5:00 AM</strong> a <strong>${isSaturday ? '6:00 PM' : '8:30 AM'}</strong>.`;
+      document.getElementById('closedTimeMsg').innerHTML = `Este formulario solo funciona los <strong>${isSaturday ? 'sabados' : 'domingos'}</strong>`;
+      document.getElementById('closedSchedule').textContent = `${config.hora_inicio} - ${config.hora_fin}`;
     } else if (!isSaturday && !isSunday) {
       document.getElementById('confirmForm').classList.add('hidden');
       document.getElementById('closedMsg').classList.remove('hidden');
-      document.getElementById('closedTimeMsg').innerHTML = 'Este formulario solo funciona los <strong>sabados</strong> y <strong>domingos</strong> de <strong>5:00 AM</strong> en adelante.';
+      document.getElementById('closedTimeMsg').innerHTML = 'Este formulario solo funciona los <strong>sabados</strong> y <strong>domingos</strong>';
+      document.getElementById('closedSchedule').textContent = '';
     }
 
     async function loadCarreras() {
