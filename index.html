@@ -81,7 +81,18 @@
       </form>
 
       <div class="px-6 pb-6">
-        <p id="formSchedule" class="text-center text-xs text-slate-400 mt-2"></p>
+        <div class="relative my-4">
+          <div class="absolute inset-0 flex items-center"><div class="w-full border-t border-slate-200"></div></div>
+          <div class="relative flex justify-center text-xs"><span class="bg-white px-3 text-slate-400 font-medium">o</span></div>
+        </div>
+        <button onclick="showVerify()" type="button"
+          class="w-full py-3 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-sm rounded-xl transition-all flex items-center justify-center gap-2 cursor-pointer">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+          </svg>
+          Buscar mi Confirmacion
+        </button>
+        <p id="formSchedule" class="text-center text-xs text-slate-400 mt-4"></p>
       </div>
     </div>
   </div>
@@ -115,6 +126,84 @@
           class="w-full py-3 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-sm rounded-xl transition-all cursor-pointer">
           Enviar otra confirmacion
         </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- VERIFY SECTION -->
+  <div id="verify-container" class="w-full max-w-md hidden">
+    <div class="bg-white rounded-2xl shadow-xl border border-slate-200/80 overflow-hidden fade-in">
+      <div class="bg-gradient-to-r from-slate-700 to-slate-800 p-6 text-center">
+        <div class="w-14 h-14 bg-white/10 rounded-2xl flex items-center justify-center mx-auto mb-3">
+          <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+          </svg>
+        </div>
+        <h1 class="text-xl font-bold text-white">Buscar mi Confirmacion</h1>
+        <p class="text-slate-300 text-sm mt-1">Ingresa tu codigo de estudiante (4-5 digitos)</p>
+      </div>
+      <form id="verifyForm" class="p-6 space-y-4">
+        <div>
+          <input type="text" id="verifyInput" required placeholder="Ej: 79794" maxlength="5"
+            class="w-full py-3 px-4 text-center text-lg rounded-xl bg-slate-50 border border-slate-200 focus:outline-none focus:ring-2 focus:ring-slate-500 font-mono font-bold text-slate-700 placeholder:text-slate-300"
+            inputmode="numeric">
+        </div>
+        <div id="verifyError" class="hidden bg-red-50 border border-red-200 text-red-700 text-sm px-4 py-3 rounded-xl"></div>
+        <button type="submit" id="verifyBtn"
+          class="w-full py-3 bg-slate-700 hover:bg-slate-800 text-white font-bold text-sm rounded-xl transition-all flex items-center justify-center gap-2 cursor-pointer">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+          </svg>
+          Buscar
+        </button>
+      </form>
+      <div class="px-6 pb-6">
+        <button onclick="hideVerify()" type="button"
+          class="w-full py-3 bg-violet-50 hover:bg-violet-100 text-violet-700 font-bold text-sm rounded-xl transition-all cursor-pointer">
+          Volver al formulario
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- VERIFY RESULT: VALID -->
+  <div id="verify-valid" class="w-full max-w-md hidden">
+    <div class="bg-white rounded-2xl shadow-xl border border-emerald-200 overflow-hidden fade-in">
+      <div class="bg-gradient-to-r from-emerald-500 to-emerald-600 p-6 text-center">
+        <div class="w-20 h-20 bg-white/20 rounded-full flex items-center justify-center mx-auto mb-3">
+          <svg class="w-12 h-12 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/>
+          </svg>
+        </div>
+        <h2 class="text-2xl font-bold text-white">TU CODIGO ES VALIDO</h2>
+        <p class="text-emerald-100 text-sm mt-1">Tu confirmacion quedo registrada correctamente</p>
+      </div>
+      <div class="p-6 space-y-3">
+        <div class="flex justify-between text-sm py-2 border-b border-slate-100"><span class="text-slate-500">Codigo:</span><span id="vrCodigo" class="font-mono font-bold text-slate-800"></span></div>
+        <div class="flex justify-between text-sm py-2 border-b border-slate-100"><span class="text-slate-500">Nombre:</span><span id="vrNombre" class="font-semibold text-slate-800"></span></div>
+        <div class="flex justify-between text-sm py-2 border-b border-slate-100"><span class="text-slate-500">Carrera:</span><span id="vrCarrera" class="font-semibold text-slate-800"></span></div>
+        <div class="flex justify-between text-sm py-2"><span class="text-slate-500">Enviado:</span><span id="vrFecha" class="font-semibold text-slate-800"></span></div>
+      </div>
+      <div class="p-4 border-t border-slate-100">
+        <button onclick="hideVerifyResult()" class="w-full py-3 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-sm rounded-xl transition-all cursor-pointer">Volver al formulario</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- VERIFY RESULT: INVALID -->
+  <div id="verify-invalid" class="w-full max-w-md hidden">
+    <div class="bg-white rounded-2xl shadow-xl border border-red-200 overflow-hidden fade-in">
+      <div class="bg-gradient-to-r from-red-500 to-red-600 p-6 text-center">
+        <div class="w-20 h-20 bg-white/20 rounded-full flex items-center justify-center mx-auto mb-3">
+          <svg class="w-12 h-12 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"/>
+          </svg>
+        </div>
+        <h2 class="text-2xl font-bold text-white">NO ES VALIDO</h2>
+        <p id="vrInvalidReason" class="text-red-100 text-sm mt-1"></p>
+      </div>
+      <div class="p-4">
+        <button onclick="hideVerifyResult()" class="w-full py-3 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-sm rounded-xl transition-all cursor-pointer">Volver al formulario</button>
       </div>
     </div>
   </div>
@@ -173,7 +262,6 @@
       document.getElementById('closedTimeMsg').innerHTML = 'Este formulario solo funciona los <strong>sabados</strong> y <strong>domingos</strong> de <strong>5:00 AM</strong> en adelante.';
     }
 
-    // Load carreras
     async function loadCarreras() {
       const { data: carreras } = await db.from('carreras').select('id, nombre').in('nombre', CARRERAS_FILTER || []).eq('activo', true);
       const select = document.getElementById('carrera');
@@ -186,7 +274,6 @@
     }
     if (CARRERAS_FILTER) loadCarreras();
 
-    // Code validation
     const codigoInput = document.getElementById('codigo');
     const codigoLabel = document.getElementById('codigoLabel');
     const codigoError = document.getElementById('codigoError');
@@ -196,7 +283,6 @@
       else { codigoLabel.classList.remove('text-red-500'); codigoLabel.classList.add('text-slate-500'); codigoError.classList.add('hidden'); }
     });
 
-    // Submit
     document.getElementById('confirmForm').addEventListener('submit', async (e) => {
       e.preventDefault();
       const btn = document.getElementById('submitBtn');
@@ -237,6 +323,65 @@
       document.getElementById('confirmFecha').textContent = fecha;
     }
     function resetForm() { document.getElementById('success-container').classList.add('hidden'); document.getElementById('form-container').classList.remove('hidden'); document.getElementById('confirmForm').reset(); }
+
+    function showVerify() {
+      document.getElementById('form-container').classList.add('hidden');
+      document.getElementById('success-container').classList.add('hidden');
+      document.getElementById('verify-container').classList.remove('hidden');
+    }
+    function hideVerify() {
+      document.getElementById('verify-container').classList.add('hidden');
+      document.getElementById('form-container').classList.remove('hidden');
+      document.getElementById('verifyInput').value = '';
+      document.getElementById('verifyError').classList.add('hidden');
+    }
+    function hideVerifyResult() {
+      document.getElementById('verify-valid').classList.add('hidden');
+      document.getElementById('verify-invalid').classList.add('hidden');
+      document.getElementById('form-container').classList.remove('hidden');
+    }
+
+    document.getElementById('verifyForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const input = document.getElementById('verifyInput').value.trim();
+      const errorDiv = document.getElementById('verifyError');
+      errorDiv.classList.add('hidden');
+
+      if (!input || input.length < 3) {
+        errorDiv.textContent = 'Ingresa tu codigo de estudiante (minimo 3 digitos)';
+        errorDiv.classList.remove('hidden');
+        return;
+      }
+
+      const btn = document.getElementById('verifyBtn');
+      btn.disabled = true;
+      btn.innerHTML = '<svg class="w-5 h-5 animate-spin" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/></svg> Buscando...';
+
+      const pad = n => String(n).padStart(2, '0');
+      const todayPattern = `${pad(now.getDate())}/${pad(now.getMonth()+1)}/${now.getFullYear()}%`;
+
+      const { data, error } = await db.from('confirmaciones')
+        .select('*').eq('codigo_id', input).like('fecha', todayPattern)
+        .eq('tipo_comida_id', TIPO_COMIDA_ID)
+        .order('id', { ascending: false }).limit(1).maybeSingle();
+
+      btn.disabled = false;
+      btn.innerHTML = '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg> Buscar';
+
+      if (error || !data) {
+        document.getElementById('verify-container').classList.add('hidden');
+        document.getElementById('verify-invalid').classList.remove('hidden');
+        document.getElementById('vrInvalidReason').textContent = `No se encontro tu confirmacion de ${TIPO_NOMBRE.toLowerCase()} para hoy.`;
+        return;
+      }
+
+      document.getElementById('verify-container').classList.add('hidden');
+      document.getElementById('verify-valid').classList.remove('hidden');
+      document.getElementById('vrCodigo').textContent = `${String(data.id).padStart(4, '0')}`;
+      document.getElementById('vrNombre').textContent = data.nombre_en_form || data.beneficiario_nombre || 'Sin nombre';
+      document.getElementById('vrCarrera').textContent = data.carrera_en_form || data.carrera_nombre || 'Sin carrera';
+      document.getElementById('vrFecha').textContent = data.fecha || '';
+    });
   </script>
 </body>
 </html>
