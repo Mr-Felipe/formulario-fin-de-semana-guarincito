@@ -255,37 +255,73 @@
     const isSaturday = dayOfWeek === 6;
     const isSunday = dayOfWeek === 0;
 
-    let TIPO_COMIDA_ID, TIPO_NOMBRE, CARRERAS_FILTER, HORA_INICIO, HORA_FIN, HEADER_COLOR, BADGE_TEXT, SCHEDULE_TEXT;
+    let TIPO_COMIDA_ID, TIPO_NOMBRE, CARRERAS_FILTER, HEADER_COLOR, BADGE_TEXT;
+    let config = { activo: true, hora_inicio: '05:00', hora_fin: '18:00' };
 
     if (isSaturday) {
       TIPO_COMIDA_ID = 3;
       TIPO_NOMBRE = 'Refrigerio';
       CARRERAS_FILTER = ['REGENCIA', 'TECNICO EN PROCESOS'];
-      HORA_INICIO = 5 * 60;
-      HORA_FIN = 18 * 60;
+      config = { activo: true, hora_inicio: '05:00', hora_fin: '18:00' };
       HEADER_COLOR = 'from-violet-600 to-violet-700';
       BADGE_TEXT = 'SABADO - REFRIGERIO';
-      SCHEDULE_TEXT = 'Sabado 5:00 AM - 6:00 PM';
     } else if (isSunday) {
       TIPO_COMIDA_ID = 1;
       TIPO_NOMBRE = 'Desayuno';
       CARRERAS_FILTER = ['REGENCIA', 'TECNICO EN PROCESOS'];
-      HORA_INICIO = 5 * 60;
-      HORA_FIN = 8 * 60 + 30;
+      config = { activo: true, hora_inicio: '05:00', hora_fin: '08:30' };
       HEADER_COLOR = 'from-indigo-600 to-indigo-700';
       BADGE_TEXT = 'DOMINGO - DESAYUNO';
-      SCHEDULE_TEXT = 'Domingo 5:00 AM - 8:30 AM';
     }
 
-    const isOpen = (isSaturday || isSunday) && totalMin >= HORA_INICIO && totalMin <= HORA_FIN;
+    function timeToMinutes(t) {
+      const [h, m] = t.split(':').map(Number);
+      return h * 60 + m;
+    }
+
+    async function loadConfig() {
+      try {
+        const tipo = isSaturday ? 'refrigerio_finde' : 'desayuno_finde';
+        const { data } = await db.from('form_config').select('*').eq('tipo', tipo).single();
+        if (data) {
+          config = data;
+          updateDisplay();
+          checkOpen();
+        }
+      } catch (e) {
+        console.warn('Error loading config:', e);
+      }
+    }
+
+    function updateDisplay() {
+      const el = document.getElementById('formSchedule');
+      if (el) el.textContent = `${isSaturday ? 'Sabado' : 'Domingo'} ${config.hora_inicio} - ${config.hora_fin}`;
+      const closedMsg = document.getElementById('closedTimeMsg');
+      if (closedMsg) closedMsg.innerHTML = `Este formulario solo funciona los <strong>${isSaturday ? 'sabados' : 'domingos'}</strong> de <strong>${config.hora_inicio}</strong> a <strong>${config.hora_fin}</strong>.`;
+    }
+
+    function checkOpen() {
+      const inicio = timeToMinutes(config.hora_inicio);
+      const fin = timeToMinutes(config.hora_fin);
+      const open = config.activo && (isSaturday || isSunday) && totalMin >= inicio && totalMin <= fin;
+      if (!open && (isSaturday || isSunday)) {
+        document.getElementById('confirmForm').classList.add('hidden');
+        document.getElementById('closedMsg').classList.remove('hidden');
+      } else if (!isSaturday && !isSunday) {
+        document.getElementById('confirmForm').classList.add('hidden');
+        document.getElementById('closedMsg').classList.remove('hidden');
+      }
+    }
 
     if (isSaturday || isSunday) {
       document.getElementById('formHeader').className = `bg-gradient-to-r ${HEADER_COLOR} p-6 text-center`;
       document.getElementById('formTitle').textContent = `Confirmar ${TIPO_NOMBRE}`;
       document.getElementById('formBadge').textContent = BADGE_TEXT;
-      document.getElementById('formSchedule').textContent = SCHEDULE_TEXT;
       document.querySelector('.code-glow')?.classList.remove('code-glow');
     }
+
+    checkOpen();
+    loadConfig();
 
     if (!isOpen && (isSaturday || isSunday)) {
       document.getElementById('confirmForm').classList.add('hidden');
