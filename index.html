@@ -372,6 +372,12 @@
         return;
       }
 
+      if (result?.motivo_alerta === 'carrera_form_vs_padron') {
+        showError('La carrera que selecciono no coincide con su carrera en el padron. Verifique y seleccione la carrera correcta.');
+        resetBtn();
+        return;
+      }
+
       if (!result?.confirmacion_id) {
         showError('No se pudo completar el registro. Verifique su codigo e intente de nuevo.');
         resetBtn();
