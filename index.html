@@ -329,11 +329,15 @@
 
     function checkOpen() {
       if (!config.activo) return false;
-      const diaHoy = DIAS_MAP[dayOfWeek];
+      // Recalcular hora actual para no usar valor stale
+      const now = new Date();
+      const colombiaTime = new Date(now.toLocaleString('en-US', { timeZone: 'America/Bogota' }));
+      const currentTotalMin = colombiaTime.getHours() * 60 + colombiaTime.getMinutes();
+      const diaHoy = DIAS_MAP[colombiaTime.getDay()];
       if (!config.dias_activos?.includes(diaHoy)) return false;
       const inicio = timeToMinutes(config.hora_inicio);
       const fin = timeToMinutes(config.hora_fin);
-      const open = totalMin >= inicio && totalMin <= fin;
+      const open = currentTotalMin >= inicio && currentTotalMin <= fin;
       const form = document.getElementById('confirmForm');
       const msg = document.getElementById('closedMsg');
       if (open) {
@@ -509,7 +513,9 @@
       btn.innerHTML = '<svg class="w-5 h-5 animate-spin" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/></svg> Buscando...';
 
       const pad = n => String(n).padStart(2, '0');
-      const todayPattern = `${pad(now.getDate())}/${pad(now.getMonth()+1)}/${now.getFullYear()}%`;
+      const verifyNow = new Date();
+      const verifyColTime = new Date(verifyNow.toLocaleString('en-US', { timeZone: 'America/Bogota' }));
+      const todayPattern = `${pad(verifyColTime.getDate())}/${pad(verifyColTime.getMonth()+1)}/${verifyColTime.getFullYear()}%`;
 
       const { data, error } = await db.from('confirmaciones')
         .select('*').eq('codigo_id', input).like('fecha', todayPattern)
