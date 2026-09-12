@@ -283,6 +283,26 @@
       return h * 60 + m;
     }
 
+    function getTodayPattern() {
+      const now = new Date();
+      const colombiaTime = new Date(now.toLocaleString('en-US', { timeZone: 'America/Bogota' }));
+      const pad = n => String(n).padStart(2, '0');
+      return `${pad(colombiaTime.getDate())}/${pad(colombiaTime.getMonth()+1)}/${colombiaTime.getFullYear()}%`;
+    }
+
+    async function checkExistingConfirmation(codigoId) {
+      const { data } = await db.from('confirmaciones')
+        .select('*')
+        .eq('codigo_id', codigoId)
+        .like('fecha', getTodayPattern())
+        .eq('tipo_comida_id', TIPO_COMIDA_ID)
+        .order('id', { ascending: false })
+        .limit(1)
+        .maybeSingle();
+
+      return data;
+    }
+
     async function loadConfig() {
       try {
         const tipo = isSaturday ? 'refrigerio_finde' : 'desayuno_finde';
@@ -383,6 +403,15 @@
 
       if (!carrera_id || !codigo_id || !nombre) { showError('Todos los campos son obligatorios'); resetBtn(); return; }
 
+      // CHECK DUPLICATE BEFORE SUBMIT
+      const existing = await checkExistingConfirmation(codigo_id);
+      if (existing) {
+        const fecha = existing.fecha || new Date().toLocaleString('es-CO', { timeZone: 'America/Bogota' });
+        showSuccess(existing.id, codigo_id, existing.nombre_en_form || nombre, existing.carrera_en_form || '', fecha, TIPO_NOMBRE);
+        resetBtn();
+        return;
+      }
+
       const { data, error } = await db.rpc('fn_insert_confirmacion_web', {
         p_codigo_id: codigo_id, p_carrera_id: carrera_id, p_nombre: nombre, p_tipo_comida_id: TIPO_COMIDA_ID,
         p_formulario_tipo: 'fin_de_semana'
@@ -399,6 +428,13 @@
 
       if (result?.motivo_alerta === 'carrera_form_vs_padron') {
         showError('La carrera que selecciono no coincide con su carrera en el padron. Verifique y seleccione la carrera correcta.');
+        resetBtn();
+        return;
+      }
+
+      if (result?.motivo_alerta === 'duplicado') {
+        const fecha = new Date().toLocaleString('es-CO', { timeZone: 'America/Bogota' });
+        showSuccess(result.confirmacion_id, codigo_id, nombre, '', fecha, TIPO_NOMBRE);
         resetBtn();
         return;
       }
