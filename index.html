@@ -393,12 +393,8 @@
 
     document.getElementById('confirmForm').addEventListener('submit', async (e) => {
       e.preventDefault();
-      console.log('ANTES de loadConfig, config:', JSON.stringify(config));
       await loadConfig();
-      console.log('DESPUES de loadConfig, config:', JSON.stringify(config));
-      const isOpen = checkOpen();
-      console.log('checkOpen result:', isOpen);
-      if (!isOpen) {
+      if (!checkOpen()) {
         showError(!config.activo ? 'El formulario ha sido cerrado por el administrador.' : 'El formulario esta cerrado fuera de horario.');
         return;
       }
