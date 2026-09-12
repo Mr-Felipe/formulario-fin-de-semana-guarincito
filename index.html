@@ -53,7 +53,7 @@
       </div>
 
       <!-- Form -->
-      <form id="confirmForm" class="p-6 space-y-4">
+      <form id="confirmForm" class="p-6 space-y-4 hidden">
         <div>
           <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1.5">Carrera</label>
           <select id="carrera" required class="w-full py-2.5 px-3 text-sm rounded-xl bg-slate-50 border border-slate-200 focus:outline-none focus:ring-2 focus:ring-violet-500 font-medium text-slate-700">
@@ -257,21 +257,23 @@
     const isSaturday = dayOfWeek === 6;
     const isSunday = dayOfWeek === 0;
 
+    const DIAS_MAP = ['domingo','lunes','martes','miércoles','jueves','viernes','sábado'];
+
     let TIPO_COMIDA_ID, TIPO_NOMBRE, CARRERAS_FILTER, HEADER_COLOR, BADGE_TEXT;
-    let config = { activo: true, hora_inicio: '05:00', hora_fin: '18:00' };
+    let config = { activo: true, hora_inicio: '05:00', hora_fin: '18:00', dias_activos: ['sábado'] };
 
     if (isSaturday) {
       TIPO_COMIDA_ID = 3;
       TIPO_NOMBRE = 'Refrigerio';
       CARRERAS_FILTER = ['REGENCIA', 'TECNICO EN PROCESOS'];
-      config = { activo: true, hora_inicio: '05:00', hora_fin: '18:00' };
+      config = { activo: true, hora_inicio: '05:00', hora_fin: '18:00', dias_activos: ['sábado'] };
       HEADER_COLOR = 'from-violet-600 to-violet-700';
       BADGE_TEXT = 'SABADO - REFRIGERIO';
     } else if (isSunday) {
       TIPO_COMIDA_ID = 1;
       TIPO_NOMBRE = 'Desayuno';
       CARRERAS_FILTER = ['REGENCIA', 'TECNICO EN PROCESOS'];
-      config = { activo: true, hora_inicio: '05:00', hora_fin: '08:30' };
+      config = { activo: true, hora_inicio: '05:00', hora_fin: '08:30', dias_activos: ['domingo'] };
       HEADER_COLOR = 'from-indigo-600 to-indigo-700';
       BADGE_TEXT = 'DOMINGO - DESAYUNO';
     }
@@ -296,18 +298,22 @@
     }
 
     function updateDisplay() {
+      const dias = config.dias_activos?.join(', ') || (isSaturday ? 'sabados' : 'domingos');
       const el = document.getElementById('formSchedule');
       if (el) el.textContent = `${isSaturday ? 'Sabado' : 'Domingo'} ${config.hora_inicio} - ${config.hora_fin}`;
       const closedMsg = document.getElementById('closedTimeMsg');
-      if (closedMsg) closedMsg.innerHTML = `Este formulario solo funciona los <strong>${isSaturday ? 'sabados' : 'domingos'}</strong>`;
+      if (closedMsg) closedMsg.innerHTML = `Este formulario solo funciona los <strong>${dias}</strong>`;
       const closedSchedule = document.getElementById('closedSchedule');
       if (closedSchedule) closedSchedule.textContent = `${config.hora_inicio} - ${config.hora_fin}`;
     }
 
     function checkOpen() {
+      if (!config.activo) return false;
+      const diaHoy = DIAS_MAP[dayOfWeek];
+      if (!config.dias_activos?.includes(diaHoy)) return false;
       const inicio = timeToMinutes(config.hora_inicio);
       const fin = timeToMinutes(config.hora_fin);
-      const open = config.activo && (isSaturday || isSunday) && totalMin >= inicio && totalMin <= fin;
+      const open = totalMin >= inicio && totalMin <= fin;
       const form = document.getElementById('confirmForm');
       const msg = document.getElementById('closedMsg');
       if (open) {
